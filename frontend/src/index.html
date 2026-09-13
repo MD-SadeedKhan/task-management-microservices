@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Management Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar__title">
+      <span class="topbar__mark">TM</span>
+      <div>
+        <h1>Task Management Console</h1>
+        <p class="topbar__subtitle">user-service · task-service · gateway</p>
+      </div>
+    </div>
+    <div class="status" id="gateway-status" title="Gateway reachability">
+      <span class="status__dot" data-state="unknown"></span>
+      <span class="status__label">Checking gateway…</span>
+    </div>
+  </header>
+
+  <main class="board">
+
+    <section class="panel" aria-labelledby="users-heading">
+      <div class="panel__header">
+        <h2 id="users-heading">Users</h2>
+        <span class="panel__count" id="users-count">—</span>
+      </div>
+
+      <form class="form" id="user-form">
+        <div class="form__row">
+          <label for="user-name">Name</label>
+          <input id="user-name" name="name" type="text" placeholder="Ada Lovelace" required />
+        </div>
+        <div class="form__row">
+          <label for="user-email">Email</label>
+          <input id="user-email" name="email" type="email" placeholder="ada@example.com" required />
+        </div>
+        <button type="submit" class="btn btn--primary">Add user</button>
+      </form>
+
+      <div class="error" id="user-error" hidden></div>
+
+      <ul class="list" id="user-list">
+        <li class="list__empty">Loading users…</li>
+      </ul>
+    </section>
+
+    <section class="panel" aria-labelledby="tasks-heading">
+      <div class="panel__header">
+        <h2 id="tasks-heading">Tasks</h2>
+        <span class="panel__count" id="tasks-count">—</span>
+      </div>
+
+      <form class="form" id="task-form">
+        <div class="form__row">
+          <label for="task-title">Title</label>
+          <input id="task-title" name="title" type="text" placeholder="Write quarterly report" required />
+        </div>
+        <div class="form__row">
+          <label for="task-description">Description</label>
+          <input id="task-description" name="description" type="text" placeholder="Optional details" />
+        </div>
+        <div class="form__row form__row--split">
+          <div>
+            <label for="task-status">Status</label>
+            <select id="task-status" name="status">
+              <option value="TODO">To do</option>
+              <option value="IN_PROGRESS">In progress</option>
+              <option value="DONE">Done</option>
+            </select>
+          </div>
+          <div>
+            <label for="task-user-id">User ID</label>
+            <input id="task-user-id" name="userId" type="number" min="1" placeholder="1" required />
+          </div>
+        </div>
+        <button type="submit" class="btn btn--primary">Add task</button>
+      </form>
+
+      <div class="error" id="task-error" hidden></div>
+
+      <ul class="list" id="task-list">
+        <li class="list__empty">Loading tasks…</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Requests go through the gateway at <code>/users</code> and <code>/tasks</code> — this page never talks to user-service or task-service directly.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

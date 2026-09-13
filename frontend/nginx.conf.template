@@ -1,0 +1,40 @@
+# Templated with envsubst at container startup (see Dockerfile).
+# GATEWAY_HOST / GATEWAY_PORT default to the Docker Compose / Kubernetes
+# service name "gateway", so this file works unchanged in both environments.
+
+server {
+    listen 80;
+    server_name _;
+
+    # Static single-page app
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Reverse-proxy API calls to the gateway. The browser never talks to
+    # user-service or task-service directly - only to this frontend, which
+    # forwards to the gateway using the internal service name.
+    location /users {
+        proxy_pass http://${GATEWAY_HOST}:${GATEWAY_PORT};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /tasks {
+        proxy_pass http://${GATEWAY_HOST}:${GATEWAY_PORT};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Exposes only the gateway's own health, used for the status indicator
+    # in the UI - not a proxy to user-service/task-service internals.
+    location /actuator/health {
+        proxy_pass http://${GATEWAY_HOST}:${GATEWAY_PORT}/actuator/health;
+        proxy_set_header Host $host;
+    }
+}

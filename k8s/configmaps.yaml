@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+  namespace: task-management
+  labels:
+    app: user-service
+data:
+  DB_HOST: "user-postgres"
+  DB_PORT: "5432"
+  DB_NAME: "userdb"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: task-service-config
+  namespace: task-management
+  labels:
+    app: task-service
+data:
+  DB_HOST: "task-postgres"
+  DB_PORT: "5432"
+  DB_NAME: "taskdb"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: task-management
+  labels:
+    app: gateway
+data:
+  USER_SERVICE_HOST: "user-service"
+  USER_SERVICE_PORT: "8081"
+  TASK_SERVICE_HOST: "task-service"
+  TASK_SERVICE_PORT: "8082"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: task-management
+  labels:
+    app: frontend
+data:
+  GATEWAY_HOST: "gateway"
+  GATEWAY_PORT: "8080"

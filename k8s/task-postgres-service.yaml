@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-postgres
+  namespace: task-management
+  labels:
+    app: task-postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: task-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

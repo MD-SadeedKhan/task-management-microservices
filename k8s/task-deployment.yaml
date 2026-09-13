@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-service
+  namespace: task-management
+  labels:
+    app: task-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: task-service
+  template:
+    metadata:
+      labels:
+        app: task-service
+    spec:
+      containers:
+        - name: task-service
+          # Replace <github-owner> and <tag> with a real commit-SHA tag
+          # produced by .github/workflows/docker.yml (see README). Never use
+          # ":latest" - always pin to an immutable commit SHA.
+          image: ghcr.io/<github-owner>/task-management-task-service:<tag>
+          ports:
+            - containerPort: 8082
+              name: http
+          envFrom:
+            - configMapRef:
+                name: task-service-config
+            - secretRef:
+                name: task-postgres-secret
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8082
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "384Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

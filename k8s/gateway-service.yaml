@@ -1,0 +1,19 @@
+# Exposed as a LoadBalancer so the gateway is reachable from outside the
+# cluster. On a local cluster (kind/minikube) without a real cloud load
+# balancer, the EXTERNAL-IP will stay <pending> - use
+# `kubectl port-forward` or `minikube tunnel` instead (see README).
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: task-management
+  labels:
+    app: gateway
+spec:
+  type: LoadBalancer
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

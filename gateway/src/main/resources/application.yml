@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-service
+              uri: http://${USER_SERVICE_HOST:user-service}:${USER_SERVICE_PORT:8081}
+              predicates:
+                - Path=/users/**
+            - id: task-service
+              uri: http://${TASK_SERVICE_HOST:task-service}:${TASK_SERVICE_PORT:8082}
+              predicates:
+                - Path=/tasks/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
