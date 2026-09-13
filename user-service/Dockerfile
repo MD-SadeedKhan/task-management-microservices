@@ -1,21 +1,18 @@
 # syntax=docker/dockerfile:1
 
 # ---------- Stage 1: Build ----------
-FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+FROM maven:3.9.8-eclipse-temurin-21-alpine AS build
 WORKDIR /build
 
-# Copy wrapper + pom first to leverage Docker layer caching for dependencies
-COPY mvnw mvnw.cmd ./
-COPY .mvn/ .mvn/
+# Copy pom first to leverage Docker layer caching for dependencies
 COPY pom.xml ./
-RUN chmod +x mvnw
 
-# Pre-fetch dependencies (cached unless pom.xml changes)
-RUN ./mvnw -B dependency:go-offline
+# Pre-fetch dependencies with retry logic to avoid transient Maven Central issues
+RUN for i in 1 2 3; do mvn -B dependency:go-offline && break || { echo "Maven dependency fetch failed, retrying..."; sleep 15; }; done
 
 # Copy source and build the application
 COPY src/ src/
-RUN ./mvnw -B clean package -DskipTests
+RUN for i in 1 2 3; do mvn -B clean package -DskipTests && break || { echo "Maven package failed, retrying..."; sleep 15; }; done
 
 # ---------- Stage 2: Runtime ----------
 FROM eclipse-temurin:21-jre-alpine AS runtime
