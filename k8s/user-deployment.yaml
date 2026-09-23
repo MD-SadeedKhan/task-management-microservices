@@ -20,7 +20,7 @@ spec:
           # Replace <github-owner> and <tag> with a real commit-SHA tag
           # produced by .github/workflows/docker.yml (see README). Never use
           # ":latest" - always pin to an immutable commit SHA.
-          image: ghcr.io/<github-owner>/task-management-user-service:<tag>
+          image: ghcr.io/md-sadeedkhan/task-management-user-service:a2d7352bc7abf0a534ba92def08bb50d83e55ef8
           ports:
             - containerPort: 8081
               name: http
